@@ -36,9 +36,15 @@ def main():
     LEVEL_SELECT = Scene([
         Text("Level Select", 100, "Arial", (0, 0, 0), (width // 2 - 200, height // 4)),
     ],[
-        Button("", "Level 1", 50, "Arial", (0, 0, 0), (width // 2 - 100, height // 2), 200, 50, lambda: print("Level 1 clicked!"), True),
+        Button("", "Level 1", 50, "Arial", (0, 0, 0), (width // 2 - 100, height // 2), 200, 50, lambda: set_current_level(LEVEL_1), True),
         Button("", "Level 2", 50, "Arial", (0, 0, 0), (width // 2 - 100, height // 2 + 100), 200, 50, lambda: print("Level 2 clicked!"), True),
         Button("", "Back", 50, "Arial", (0, 0, 0), (width // 2 - 100, height // 2 + 200), 200, 50, lambda: set_current_level(MAIN_MENU), True)
+    ],0,0,0)
+
+    LEVEL_1 = Scene([
+        Text("Level 1", 100, "Arial", (0, 0, 0), (width // 2 - 200, height // 10)),
+    ],[
+        Button("", "Quit Level", 50, "Arial", (0, 0, 0), (width // 2 - 100, height - 200), 200, 50, lambda: set_current_level(MAIN_MENU), True)
     ],0,0,0)
 
     current_level = MAIN_MENU
@@ -55,16 +61,12 @@ def main():
             if event.type == pygame.QUIT:
                 run = False
 
-        # TODO: przydalyby sie dwie ogolne funckje update/draw no i clear przed draw
-
         window.fill((211, 211, 211))
 
         current_level.draw(window, height, width)
         current_level.update()
 
         mouse_pos_text.draw(window, height, width)
-
-        #draw_laser(window)
 
         pygame.display.flip()
 

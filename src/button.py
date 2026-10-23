@@ -6,14 +6,13 @@ from .image import Image
 
 class Button(InteractableObject, DecorationObject):
     def __init__(self, image_path: str, text: str, font_size: int, font_name: str, color: tuple, position: tuple, width, height, on_click, fallback: bool = False):
-        self.background_image = Image(image_path, position, fallback)
+        self.background_image = Image(image_path, position, width, height, fallback)
         self.text = Text(text, font_size, font_name, color, position)
         self.position = position
         self.on_click = on_click
         self.font_size = font_size
         self.width = width
         self.height = height
-        self.clicked = False
 
     def update_title(self, new_text: str):
         self.text.update_text(new_text)
@@ -30,11 +29,8 @@ class Button(InteractableObject, DecorationObject):
     def update(self):
         mouse_pos = pygame.mouse.get_pos()
         if self.is_hovered(mouse_pos):
-            if pygame.mouse.get_pressed()[0] and not self.clicked:
-                self.clicked = True
+            if pygame.mouse.get_just_pressed()[0]:
                 self.on_click()
-            else:
-                self.clicked = False
 
     def is_hovered(self, mouse_pos: tuple):
         return (self.position[0] <= mouse_pos[0] <= self.position[0] + self.width) and (self.position[1] <= mouse_pos[1] <= self.position[1] + self.height)
