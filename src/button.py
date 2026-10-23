@@ -5,23 +5,24 @@ from .text import Text
 from .image import Image
 
 class Button(InteractableObject, DecorationObject):
-    def __init__(self, image_path: str, text: str, font_size: int, font_name: str, color: tuple, position: tuple, on_click):
-        self.background_image = Image(image_path)
-        self.text = Text(text, font_size, font_name, color, position / 2)
+    def __init__(self, image_path: str, text: str, font_size: int, font_name: str, color: tuple, position: tuple, on_click, fallback: bool = False):
+        self.background_image = Image(image_path, position, fallback)
+        self.text = Text(text, font_size, font_name, color, position)
         self.position = position
         self.on_click = on_click
+        self.font_size = font_size
 
     def update_title(self, new_text: str):
         self.text.update_text(new_text)
 
     def update_position(self, new_position: tuple):
         self.position = new_position
-        self.text.update_position(new_position / 2)
+        self.text.update_position(new_position)
         self.background_image.update_position(new_position)
 
-    def draw(self, surface: pygame.Surface):
-        self.text.draw(surface)
-        self.background_image.draw(surface)
+    def draw(self, surface: pygame.Surface, width: int, height: int):
+        self.background_image.draw(surface, height, width)
+        self.text.draw(surface, height, width)
 
     def update(self):
         mouse_pos = pygame.mouse.get_pos()

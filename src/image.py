@@ -8,7 +8,7 @@ class Image(DecorationObject):
         self.fallback = fallback
         self.position = position
 
-    def draw(self, window: pygame.Surface):
+    def draw(self, window: pygame.Surface, height: int, width: int):
         if not self.fallback:
             window.blit(self.image, self.position)
         else:

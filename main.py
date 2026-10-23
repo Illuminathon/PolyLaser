@@ -2,6 +2,7 @@ import pygame
 from src.laser import draw_laser
 from src.scene import Scene
 from src.text import Text
+from src.button import Button
 
 def main():
     pygame.init()
@@ -14,11 +15,15 @@ def main():
     window = pygame.display.set_mode((width, height), pygame.FULLSCREEN)
     pygame.display.set_caption("PolyLaser")
 
-    current_level = Scene(decoration=[Text("PolyLaser", (width // 2, height // 2), 100, (0, 0, 0))])
+    current_level = Scene([
+        Text("PolyLaser", 100, "Arial", (0, 0, 0), (width // 2 - 200, height // 4)),
+        Button("", "Start", 50, "Arial", (0, 0, 0), (width // 2 - 100, height // 2), lambda: print("Button clicked!"), True),
+        Button("", "Exit", 50, "Arial", (0, 0, 0), (width // 2 - 100, height // 2 + 100), lambda: print("Button clicked!"), True),
+    ],[],0,0,0)
 
     run = True
     while run:
-        pygame.time.delay(1000 / 60)
+        pygame.time.delay(16)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -31,7 +36,7 @@ def main():
         current_level.draw(window, height, width)
         current_level.update()
 
-        draw_laser(window)
+        #draw_laser(window)
 
         pygame.display.flip()
 

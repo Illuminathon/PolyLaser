@@ -11,5 +11,7 @@ class Scene:
             interactable.update()
 
     def draw(self, window, height, width):
-        for object in [self.decoration] + self.interactables:
+        bundled = self.decoration
+        bundled.extend(self.interactables)
+        for object in bundled:
             object.draw(window, height, width)

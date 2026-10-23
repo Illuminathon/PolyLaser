@@ -8,8 +8,8 @@ class DraggableObject(InteractableObject, DecorationObject):
         self.position = position
         self.dragging = False
 
-    def draw(self, window):
-        self.image.draw(window, self.position)
+    def draw(self, window, height, width):
+        self.image.draw(window, height, width)
 
     def update(self, mouse_position, mouse_pressed):
         if mouse_pressed and self.is_mouse_over(mouse_position):
