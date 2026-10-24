@@ -4,6 +4,9 @@ from src.laser import draw_laser
 from src.scene import Scene
 from src.text import Text
 from src.button import Button
+from src.laser_dispenser import LaserDispenser
+from src.mirror import Mirror
+from src.collider_object import ColliderObject
 
 NONE = Scene([], [], 0, 0, 0)
 
@@ -42,9 +45,12 @@ def main():
     ],0,0,0)
 
     LEVEL_1 = Scene([
+        LaserDispenser("assets/sprites/laser_dispenser.png", (width // 2 - 25, height - 100), 200, 200, False),
+        ColliderObject("assets/sprites/wall.png", (width // 2 - 100, height // 2 + 50), 100, 100, False),
         Text("Level 1", 100, "Arial", (0, 0, 0), (width // 2 - 200, height // 10)),
     ],[
-        Button("", "Quit Level", 50, "Arial", (0, 0, 0), (width // 2 - 100, height - 200), 200, 50, lambda: set_current_level(MAIN_MENU), True)
+        Button("", "Quit Level", 50, "Arial", (0, 0, 0), (width // 2 - 100, height - 200), 200, 50, lambda: set_current_level(MAIN_MENU), True),
+        Mirror("assets/sprites/mirror.png", (width // 2 - 25, height // 2 - 25), 100, 170, False),
     ],0,0,0)
 
     current_level = MAIN_MENU
@@ -75,8 +81,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-
-
