@@ -7,6 +7,7 @@ class Mirror(DraggableObject):
         self.angle = 0
         self.type = "mirror"
         self._last_mouse_position = None
+        self._base_size = pygame.Vector2(width, height)
         self._base_image = (
             self.image.image.copy() if not self.image.fallback else None
         )
@@ -55,22 +56,64 @@ class Mirror(DraggableObject):
         )
 
     def check_collision(self, ray_line):
-        rect = pygame.Rect(
-            self.image.position[0],
-            self.image.position[1],
-            self.image.width,
-            self.image.height,
-        )
-        clipped = rect.clipline(ray_line[0], ray_line[1])
-        if not clipped:
+        start = pygame.Vector2(ray_line[0])
+        ray = pygame.Vector2(ray_line[1]) - start
+        corners = self._get_corners()
+        intersections = []
+
+        for first, second in zip(corners, corners[1:] + corners[:1]):
+            edge = second - first
+            denominator = ray.cross(edge)
+            if abs(denominator) < 1e-8:
+                continue
+
+            offset = first - start
+            ray_distance = offset.cross(edge) / denominator
+            edge_distance = offset.cross(ray) / denominator
+            if 0 <= ray_distance <= 1 and 0 <= edge_distance <= 1:
+                intersections.append(start + ray * ray_distance)
+
+        if not intersections:
             return None
 
-        start = pygame.Vector2(ray_line[0])
         return min(
-            (pygame.Vector2(point) for point in clipped),
+            intersections,
             key=lambda point: point.distance_squared_to(start),
         )
 
-    def calculate_reflection(self, direction):
-        normal = pygame.Vector2(0, -1).rotate(-self.angle)
+    def _get_corners(self):
+        center = pygame.Vector2(
+            self.image.position[0] + self.image.width / 2,
+            self.image.position[1] + self.image.height / 2,
+        )
+        half_size = self._base_size / 2
+        return [
+            center + pygame.Vector2(-half_size.x, -half_size.y).rotate(-self.angle),
+            center + pygame.Vector2(half_size.x, -half_size.y).rotate(-self.angle),
+            center + pygame.Vector2(half_size.x, half_size.y).rotate(-self.angle),
+            center + pygame.Vector2(-half_size.x, half_size.y).rotate(-self.angle),
+        ]
+
+    def calculate_reflection(self, direction, hit_point):
+        corners = self._get_corners()
+
+        def distance_to_edge(point, edge):
+            start, end = edge
+            segment = end - start
+            length_squared = segment.length_squared()
+            if length_squared == 0:
+                return point.distance_squared_to(start)
+            projection = max(
+                0,
+                min(1, (point - start).dot(segment) / length_squared),
+            )
+            closest = start + segment * projection
+            return point.distance_squared_to(closest)
+
+        first_edge = min(
+            zip(corners, corners[1:] + corners[:1]),
+            key=lambda edge: distance_to_edge(hit_point, edge),
+        )
+        edge = first_edge[1] - first_edge[0]
+        normal = pygame.Vector2(-edge.y, edge.x).normalize()
         return direction.reflect(normal).normalize()

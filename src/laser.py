@@ -48,7 +48,7 @@ def trace_laser(start_position, initial_angle, objects):
         points.append(hit_point)
 
         if getattr(hit_object, "type", None) == "mirror":
-            direction = hit_object.calculate_reflection(direction)
+            direction = hit_object.calculate_reflection(direction, hit_point)
             current_start = hit_point + direction * 0.1
             ignored_object = hit_object
             points.append(current_start)

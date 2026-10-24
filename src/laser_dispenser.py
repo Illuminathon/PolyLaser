@@ -3,8 +3,8 @@ from .decoration_object import DecorationObject
 from .image import Image
 
 class LaserDispenser(DecorationObject):
-    def __init__(self, position: tuple, width: int, height: int):
-        self.sprite = Image("", position, width, height, True)
+    def __init__(self, image_path: str, position: tuple, width: int, height: int, fallback: bool = False):
+        self.sprite = Image(image_path, position, width, height, fallback)
         self.position = position
         self.width = width
         self.height = height
