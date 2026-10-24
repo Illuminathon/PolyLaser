@@ -11,7 +11,18 @@ class Scene:
             interactable.update()
 
     def draw(self, window, height, width):
-        bundled = self.decoration
-        bundled.extend(self.interactables)
+        bundled = self.decoration + self.interactables
+
+        for object in bundled:
+            if getattr(object, "type", None) == "laser_dispenser":
+                from .laser import draw_laser
+                if object.laser_on:
+                    draw_laser(
+                        window,
+                        object.get_laser_origin(),
+                        object.angle,
+                        bundled,
+                    )
+
         for object in bundled:
             object.draw(window, height, width)

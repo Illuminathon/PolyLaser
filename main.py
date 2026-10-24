@@ -4,6 +4,8 @@ from src.laser import draw_laser
 from src.scene import Scene
 from src.text import Text
 from src.button import Button
+from src.laser_dispenser import LaserDispenser
+from src.mirror import Mirror
 
 NONE = Scene([], [], 0, 0, 0)
 
@@ -42,9 +44,11 @@ def main():
     ],0,0,0)
 
     LEVEL_1 = Scene([
+        LaserDispenser((width // 2 - 25, height - 100), 50, 100),
         Text("Level 1", 100, "Arial", (0, 0, 0), (width // 2 - 200, height // 10)),
     ],[
-        Button("", "Quit Level", 50, "Arial", (0, 0, 0), (width // 2 - 100, height - 200), 200, 50, lambda: set_current_level(MAIN_MENU), True)
+        Button("", "Quit Level", 50, "Arial", (0, 0, 0), (width // 2 - 100, height - 200), 200, 50, lambda: set_current_level(MAIN_MENU), True),
+        Mirror("assets/images/menu_bg.jpg", (width // 2 - 25, height // 2 - 25), 50, 50, False),
     ],0,0,0)
 
     current_level = MAIN_MENU

@@ -1,55 +1,64 @@
 import pygame 
-import math
 
-def get_ray_end_position(start_pos, angle, max_length=1000):
-    rad = math.radians(angle)
-    end_x = start_pos[0] + max_length * math.cos(rad)
-    end_y = start_pos[1] + max_length * math.sin(rad)
-    return (end_x, end_y)
-
-def draw_laser(surface, start_position, initial_angle, buildings):
-    current_start = start_position 
-    current_angle = initial_angle
-    points = [current_start] # list of the points the laser has to go through
-
-    for _ in range(5):
-
-        target_x, target_y = get_ray_end_position(current_start, current_angle)
-        ray_line = (current_start, (target_x, target_y))
-
-        hit_point = None 
-        hit_wall = None
+MAX_RAY_LENGTH = 2000
+MAX_REFLECTIONS = 10
 
 
-        # There is a list of object, we can change it in the future
-        for obj in game_objects:
-            collision = obj.check_collision(ray_line)
-            if collision:
-                hit_point = collision
-                hit_object = obj
-                break
+def _closest_collision(start, end, objects, ignored_object=None):
+    closest = None
+    closest_distance = float("inf")
 
-            if hit_point:
-                points.append(hit_point)
-                #if the laser hits the mirror
-                if hit_object.type == "mirror":
+    for obj in objects:
+        if obj is ignored_object:
+            continue
 
-                    current_angle = hit_object.calculate_reflection(current_angle)
-                    current_start = hit_point
-                # If the laser hits sensor you will win so we can add here something else than break 
-                elif hit_object.type == "sensor":
-                    break
-                # If the laser hits the wall:
-                elif hit_object.type == "wall":
-                    break
-            else:
-                points.append((target_x, target_y))
-                break
-    
+        check_collision = getattr(obj, "check_collision", None)
+        if check_collision is None:
+            continue
+
+        collision = check_collision((start, end))
+        if collision is None:
+            continue
+
+        point = pygame.Vector2(collision)
+        distance = point.distance_squared_to(start)
+        if distance < closest_distance:
+            closest = (point, obj)
+            closest_distance = distance
+
+    return closest
 
 
-    # end_position = (1180, 360)
+def trace_laser(start_position, initial_angle, objects):
+    current_start = pygame.Vector2(start_position)
+    direction = pygame.Vector2(1, 0).rotate(initial_angle).normalize()
+    points = [current_start]
+    ignored_object = None
 
-    # pygame.draw.line(surface, (255, 0, 0), start_position, end_position, width=5)
+    for _ in range(MAX_REFLECTIONS):
+        ray_end = current_start + direction * MAX_RAY_LENGTH
+        hit = _closest_collision(current_start, ray_end, objects, ignored_object)
+        ignored_object = None
+
+        if hit is None:
+            points.append(ray_end)
+            break
+
+        hit_point, hit_object = hit
+        points.append(hit_point)
+
+        if getattr(hit_object, "type", None) == "mirror":
+            direction = hit_object.calculate_reflection(direction)
+            current_start = hit_point + direction * 0.1
+            ignored_object = hit_object
+            points.append(current_start)
+        else:
+            break
+
+    return points
 
 
+def draw_laser(surface, start_position, initial_angle, objects):
+    points = trace_laser(start_position, initial_angle, objects)
+    if len(points) > 1:
+        pygame.draw.lines(surface, (255, 0, 0), False, points, 3)
