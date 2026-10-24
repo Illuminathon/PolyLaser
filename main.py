@@ -7,6 +7,7 @@ from src.button import Button
 from src.laser_dispenser import LaserDispenser
 from src.mirror import Mirror
 from src.collider_object import ColliderObject
+from src.image import Image
 
 NONE = Scene([], [], 0, 0, 0)
 
@@ -30,13 +31,16 @@ def main():
     pygame.display.set_caption("PolyLaser")
 
     MAIN_MENU = Scene([
+        Image("assets/images/menu_bg.jpg", (0, 0), width, height, False),
         Text("PolyLaser", 100, "Arial", (0, 0, 0), (width // 2 - 200, height // 4)),
+        #Text("PolyLaser", 100, "Arial", (255, 255, 255), (width // 2 - 207, height // 4 - 7)),
     ],[
         Button("", "Start", 50, "Arial", (0, 0, 0), (width // 2 - 100, height // 2), 200, 50, lambda: set_current_level(LEVEL_SELECT), True),
         Button("", "Exit", 50, "Arial", (0, 0, 0), (width // 2 - 100, height // 2 + 100), 200, 50, lambda: sys.exit(), True)
     ],0,0,0)
 
     LEVEL_SELECT = Scene([
+        Image("assets/images/menu_bg.jpg", (0, 0), width, height, False),
         Text("Level Select", 100, "Arial", (0, 0, 0), (width // 2 - 200, height // 4)),
     ],[
         Button("", "Level 1", 50, "Arial", (0, 0, 0), (width // 2 - 100, height // 2), 200, 50, lambda: set_current_level(LEVEL_1), True),
@@ -45,6 +49,7 @@ def main():
     ],0,0,0)
 
     LEVEL_1 = Scene([
+        Image("assets/images/menu_bg.jpg", (0, 0), width, height, False),
         LaserDispenser("assets/sprites/laser_dispenser.png", (width // 2 - 25, height - 100), 200, 200, False),
         ColliderObject("assets/sprites/wall.png", (width // 2 - 100, height // 2 + 50), 100, 100, False),
         Text("Level 1", 100, "Arial", (0, 0, 0), (width // 2 - 200, height // 10)),
