@@ -9,7 +9,7 @@ class MainMenu:
         self.title_font = pygame.font.Font(None, 80)
         self.button_font = pygame.font.Font(None, 40)
         
-        bg_path = os.path.join("assets", "images", "menu_bg.png")
+        bg_path = os.path.join("src", "menu_bg.png")
         try:
             self.bg_image = pygame.image.load(bg_path).convert()
             self.bg_image = pygame.transform.scale(self.bg_image, (screen_width, screen_height))
